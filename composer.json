@@ -1,13 +1,13 @@
 {
-    "name": "iexbase/tron-api",
+    "name": "sultanov-solutions/tron-api",
     "description": "A PHP API for interacting with Tron (Trx)",
     "license": "MIT",
     "type":   "library",
-    "homepage": "https://github.com/iexbase/tron-api",
+    "homepage": "https://github.com/sultanov-solutions/tron-api",
     "authors": [
         {
-            "name": "Shamsudin Serderov",
-            "email": "steein.shamsudin@gmail.com"
+            "name": "Sultanov Solutions",
+            "email": "info@sultanov-solutions.com"
         }
     ],
     "keywords": [
