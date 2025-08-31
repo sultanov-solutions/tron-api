@@ -7,12 +7,12 @@ return [
         'mainnet' => [
             'network' => 'mainnet',
             'endpoints' => [
-                'full_node' => env('TRON_FULLNODE', 'https://api.trongrid.io'),
-                'solidity_node' => env('TRON_SOLIDITY_NODE', 'https://api.trongrid.io'),
-                'event_server' => env('TRON_EVENT_SERVER', 'https://api.trongrid.io'),
+                'full_node' => env('TRON_FULLNODE') ?: 'https://api.trongrid.io',
+                'solidity_node' => env('TRON_SOLIDITY_NODE') ?: 'https://api.trongrid.io',
+                'event_server' => env('TRON_EVENT_SERVER') ?: 'https://api.trongrid.io',
                 'status_page' => '/',
             ],
-            'timeout_ms' => env('TRON_TIMEOUT_MS', 30000),
+            'timeout_ms' => env('TRON_TIMEOUT_MS') ?: 30000,
             'headers' => [],
             // API key(s) for TronGrid/Tronscan.
             // You can set TRON_API_KEY as comma-separated list to enable rotation.
@@ -35,7 +35,7 @@ return [
                 'event_server' => 'https://api.shasta.trongrid.io',
                 'status_page' => '/',
             ],
-            'timeout_ms' => env('TRON_TIMEOUT_MS', 30000),
+            'timeout_ms' => env('TRON_TIMEOUT_MS') ?: 30000,
             'headers' => [],
             'api_key' => env('TRON_API_KEY'),
             'auth' => [],
@@ -49,7 +49,7 @@ return [
                 'event_server' => 'https://nile.trongrid.io',
                 'status_page' => '/',
             ],
-            'timeout_ms' => env('TRON_TIMEOUT_MS', 30000),
+            'timeout_ms' => env('TRON_TIMEOUT_MS') ?: 30000,
             'headers' => [],
             'api_key' => env('TRON_API_KEY'),
             'auth' => [],

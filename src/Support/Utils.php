@@ -12,8 +12,18 @@ class Utils
      * @param $url
      * @return bool
      */
-    public static function isValidUrl($url) :bool {
-        return (bool)parse_url($url);
+    public static function isValidUrl($url) : bool
+    {
+        if (!is_string($url) || $url === '') {
+            return false;
+        }
+        $parts = parse_url($url);
+        if ($parts === false) {
+            return false;
+        }
+        // Require http/https scheme and a host part
+        return isset($parts['scheme'], $parts['host'])
+            && in_array(strtolower($parts['scheme']), ['http', 'https'], true);
     }
 
     /**
