@@ -1,7 +1,11 @@
 # TRON API
 A PHP API for interacting with the Tron Protocol
 
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Tests](https://github.com/sultanov-solutions/tron-api/actions/workflows/tests.yml/badge.svg)](https://github.com/sultanov-solutions/tron-api/actions/workflows/tests.yml)
+[![Packagist](https://img.shields.io/packagist/v/sultanov-solutions/tron-api.svg?style=flat-square)](https://packagist.org/packages/sultanov-solutions/tron-api)
+[![PHP](https://img.shields.io/packagist/php-v/sultanov-solutions/tron-api.svg?style=flat-square)](composer.json)
+[![Laravel](https://img.shields.io/badge/Laravel-12%20compatible-FF2D20?logo=laravel&style=flat-square)](#)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
 ## Install
 
@@ -64,4 +68,3 @@ vendor/bin/phpunit
 
 ## Donations
 **Tron(TRX)**: TRWBqiqoFZysoAeyR1J35ibuyc8EvhUAoY
-
