@@ -16,7 +16,7 @@ A PHP API for interacting with the Tron Protocol
 
 This project is a maintained fork of https://github.com/iexbase/tron-api. Full credit to the original authors and contributors of the upstream project. This fork focuses on PHP 8+ and Laravel 12 compatibility, dependency hygiene, CI/release tooling, and small fixes.
 
-## Install
+## Installation
 
 ```bash
 # latest stable
@@ -31,47 +31,84 @@ composer require sultanov-solutions/tron-api:^5.0.2
 - PHP: ^8.1
 - Extensions: ext-json, ext-bcmath, ext-mbstring, ext-gmp
 - Guzzle 7.x (installed transitively)
-- web3p/web3.php ^0.3.2 (installed transitively)
+- web3p/web3.php ^0.1.6 (installed transitively)
 
 This library is framework-agnostic and compatible with Laravel 12.
 
-## Example Usage
+## Features
+
+- Standalone and Laravel integration without hard coupling
+- Explicit instance creation (no hidden singletons)
+- Network presets: mainnet, shasta, nile; custom endpoints support
+- Rotating API keys in Laravel (round-robin, persisted via Cache)
+- PSR-7 friendly HTTP with Guzzle (core) or Laravel Http client (adapter)
+- PHP 8.1+, clean dependencies, CI and release workflows
+
+## Usage
+
+### Standalone
 
 ```php
 use IEXBase\TronAPI\Tron;
-use IEXBase\TronAPI\Provider\HttpProvider;
-use IEXBase\TronAPI\Exception\TronException;
 
-$fullNode = new HttpProvider('https://api.trongrid.io');
-$solidityNode = new HttpProvider('https://api.trongrid.io');
-$eventServer = new HttpProvider('https://api.trongrid.io');
+// Defaults to mainnet
+$tron = Tron::init();
 
-try {
-    $tron = new Tron($fullNode, $solidityNode, $eventServer);
-} catch (TronException $e) {
-    exit($e->getMessage());
-}
+// Or with options / network preset
+$tron = Tron::init([
+    'network' => 'shasta',
+    // 'api_key' => 'YOUR_TRONGRID_KEY',
+    // 'endpoints' => ['full_node' => 'https://...', 'solidity_node' => 'https://...']
+]);
 
 $tron->setAddress('TYourAddressBase58OrHex');
-
-// Balance
-$tron->getBalance(null, true);
-
-// Transfer TRX
-var_dump($tron->send('TRecipientAddress', 1.5));
-
-// Generate Address
-var_dump($tron->createAccount());
-
-// Get Last Blocks
-var_dump($tron->getLatestBlocks(2));
-
-// Change account name (only once)
-var_dump($tron->changeAccountName('TYourAddressBase58', 'NewName'));
-
-// Contract
-$tron->contract('TContractAddressHere');
+$balance = $tron->getBalance(null, true);
 ```
+
+## Configuration (Laravel)
+
+`config/tron.php` controls default connection and per-connection options:
+
+- `default`: connection name (e.g., `mainnet`)
+- `connections.{name}.network`: `mainnet` | `shasta` | `nile` | `custom`
+- `connections.{name}.endpoints`: `full_node`, `solidity_node`, `event_server`, `status_page`
+- `timeout_ms`, `headers`, `auth` (basic/bearer), `api_key`(s)
+- optional: `private_key`, `address`
+
+ENV examples:
+
+```
+TRON_DEFAULT=mainnet
+TRON_FULLNODE=https://api.trongrid.io
+TRON_SOLIDITY_NODE=https://api.trongrid.io
+TRON_EVENT_SERVER=https://api.trongrid.io
+TRON_API_KEY=key1,key2,key3
+TRON_TIMEOUT_MS=30000
+```
+
+### Laravel 12
+
+1) Publish config:
+
+```bash
+php artisan vendor:publish --tag=tron-config
+```
+
+2) Create a fresh connection and use it explicitly:
+
+```php
+use IEXBase\TronAPI\Laravel\Facades\Tron; // or app('tron')
+
+// Fresh instance for default connection from config
+$tron = Tron::make();
+
+// Or choose connection + override options for this instance
+$tron = Tron::make('shasta', ['timeout_ms' => 20000, 'api_key' => 'TEST_KEY']);
+
+$balance = $tron->getBalance(null, true);
+```
+
+This library deliberately does not expose a singleton Tron instance in Laravel — every `make(...)` returns a new, predictable instance configured from arguments and config.
 
 ## Testing
 
@@ -88,3 +125,18 @@ If this library is useful for you, you may support the original project or this 
 ## Changelog
 
 See `CHANGELOG.md` for release notes.
+
+## API Key Rotation (Laravel)
+
+- Set multiple TronGrid/Tronscan API keys as a comma-separated list in `.env`:
+
+```
+TRON_API_KEY=key1,key2,key3
+```
+
+- Each `Tron::make(...)` picks the next key in a round-robin fashion and persists the index in Cache.
+- You can override rotation per instance by passing an explicit key:
+
+```php
+$tron = \IEXBase\TronAPI\Laravel\Facades\Tron::make('mainnet', ['api_key' => 'OVERRIDE_KEY']);
+```

@@ -48,6 +48,21 @@
     "config": {
         "sort-packages": true
     },
+    "suggest": {
+        "illuminate/support": "^12.0 for Laravel integration (provider, manager)",
+        "illuminate/http": "^12.0 for Laravel Http client adapter",
+        "illuminate/cache": "^12.0 for API key rotation persistence"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "IEXBase\\TronAPI\\Laravel\\TronServiceProvider"
+            ],
+            "aliases": {
+                "Tron": "IEXBase\\TronAPI\\Laravel\\Facades\\Tron"
+            }
+        }
+    },
 
     "prefer-stable": true
 }

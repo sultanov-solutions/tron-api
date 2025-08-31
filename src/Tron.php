@@ -1386,4 +1386,85 @@ class Tron implements TronInterface
             'value' =>  $token_id
         ]);
     }
+
+    /**
+     * Static factory to create a Tron instance with options.
+     * Options:
+     *  - network: mainnet|shasta|nile|custom
+     *  - endpoints: [full_node, solidity_node, event_server, status_page]
+     *  - timeout_ms: int
+     *  - headers: array
+     *  - api_key: string (sets TRON-PRO-API-KEY header)
+     *  - auth: [basic => [user, pass]] or [bearer => token]
+     *  - private_key: string|null
+     *  - address: string|null (base58 or hex)
+     *  - http_provider_factory: callable($host, $timeoutMs, array $headers, string $statusPage): HttpProviderInterface
+     */
+    public static function init(array $options = []): self
+    {
+        $network = strtolower($options['network'] ?? 'mainnet');
+        $presets = self::networkPresets($network);
+
+        $timeout = intval($options['timeout_ms'] ?? 30000);
+        $headers = $options['headers'] ?? [];
+        if (!is_array($headers)) { $headers = []; }
+
+        if (!empty($options['api_key'])) {
+            $headers['TRON-PRO-API-KEY'] = $options['api_key'];
+        }
+
+        // auth: basic or bearer
+        $basicUser = $options['auth']['basic'][0] ?? false;
+        $basicPass = $options['auth']['basic'][1] ?? false;
+        if (!empty($options['auth']['bearer'])) {
+            $headers['Authorization'] = 'Bearer ' . $options['auth']['bearer'];
+        }
+
+        $endpoints = $options['endpoints'] ?? [];
+        $full = $endpoints['full_node'] ?? $presets['full_node'];
+        $sol  = $endpoints['solidity_node'] ?? $presets['solidity_node'];
+        $event= $endpoints['event_server'] ?? $presets['event_server'];
+        $statusPage = $endpoints['status_page'] ?? '/';
+
+        $factory = $options['http_provider_factory'] ?? function($host, $timeoutMs, $headersArg, $status) use ($basicUser, $basicPass) {
+            return new Provider\HttpProvider($host, $timeoutMs, $basicUser, $basicPass, $headersArg, $status);
+        };
+
+        $fullProv = $factory($full, $timeout, $headers, $statusPage);
+        $solProv  = $factory($sol, $timeout, $headers, $statusPage);
+        $eventProv= $factory($event, $timeout, $headers, $statusPage);
+
+        $tron = new self($fullProv, $solProv, $eventProv, null, null, $options['private_key'] ?? null);
+
+        if (!empty($options['address'])) {
+            $tron->setAddress($options['address']);
+        }
+
+        return $tron;
+    }
+
+    /**
+     * Preset endpoints for known networks.
+     */
+    protected static function networkPresets(string $network): array
+    {
+        $map = [
+            'mainnet' => [
+                'full_node' => 'https://api.trongrid.io',
+                'solidity_node' => 'https://api.trongrid.io',
+                'event_server' => 'https://api.trongrid.io',
+            ],
+            'shasta' => [
+                'full_node' => 'https://api.shasta.trongrid.io',
+                'solidity_node' => 'https://api.shasta.trongrid.io',
+                'event_server' => 'https://api.shasta.trongrid.io',
+            ],
+            'nile' => [
+                'full_node' => 'https://nile.trongrid.io',
+                'solidity_node' => 'https://nile.trongrid.io',
+                'event_server' => 'https://nile.trongrid.io',
+            ],
+        ];
+        return $map[$network] ?? $map['mainnet'];
+    }
 }

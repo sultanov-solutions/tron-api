@@ -76,11 +76,14 @@ class HttpProvider implements HttpProviderInterface
         $this->statusPage = $statusPage;
         $this->headers = $headers;
 
-        $this->httpClient = new Client([
+        $clientOptions = [
             'base_uri'  =>  $host,
             'timeout'   =>  $timeout,
-            'auth'      =>  $user && [$user, $password]
-        ]);
+        ];
+        if ($user !== false) {
+            $clientOptions['auth'] = [$user, $password];
+        }
+        $this->httpClient = new Client($clientOptions);
     }
 
     /**
@@ -150,10 +153,20 @@ class HttpProvider implements HttpProviderInterface
 
         $options = [
             'headers'   => $this->headers,
-            'body'      => json_encode($payload)
         ];
 
-        $request = new Request($method, $url, $options['headers'], $options['body']);
+        $uri = $url;
+        $body = null;
+        if ($method === 'GET') {
+            if (!empty($payload)) {
+                $query = http_build_query($payload);
+                $uri .= (strpos($url, '?') === false ? '?' : '&') . $query;
+            }
+        } else { // POST
+            $body = json_encode($payload);
+        }
+
+        $request = new Request($method, $uri, $options['headers'], $body);
         $rawResponse = $this->httpClient->send($request, $options);
 
         return $this->decodeBody(
