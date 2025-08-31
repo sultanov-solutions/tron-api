@@ -11,7 +11,7 @@ class TronServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../../config/tron.php', 'tron');
+        $this->mergeConfigFrom(__DIR__.'/../../config/tron-connection.php', 'tron-connection');
 
         // Manager binding
         $this->app->singleton(TronManager::class, function($app){
@@ -28,7 +28,7 @@ class TronServiceProvider extends ServiceProvider
     {
         // Publish config
         $this->publishes([
-            __DIR__.'/../../config/tron.php' => config_path('tron.php'),
-        ], 'tron-config');
+            __DIR__.'/../../config/tron-connection.php' => config_path('tron-connection.php'),
+        ], 'tron-connection-config');
     }
 }

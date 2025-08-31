@@ -13,7 +13,7 @@ class TronManager extends Manager
 {
     public function getDefaultDriver()
     {
-        return $this->app['config']['tron.default'] ?? 'mainnet';
+        return $this->app['config']['tron-connection.default'] ?? 'mainnet';
     }
 
     /**
@@ -33,7 +33,7 @@ class TronManager extends Manager
     public function make($name = null, array $override = [])
     {
         $name = $name ?? $this->getDefaultDriver();
-        $connections = $this->app['config']['tron.connections'] ?? [];
+        $connections = $this->app['config']['tron-connection.connections'] ?? [];
         $opts = $connections[$name] ?? [];
 
         // Prepare API key with rotation (if not overridden)

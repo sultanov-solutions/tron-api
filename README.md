@@ -67,7 +67,7 @@ $balance = $tron->getBalance(null, true);
 
 ## Configuration (Laravel)
 
-`config/tron.php` controls default connection and per-connection options:
+`config/tron-connection.php` controls default connection and per-connection options:
 
 - `default`: connection name (e.g., `mainnet`)
 - `connections.{name}.network`: `mainnet` | `shasta` | `nile` | `custom`
@@ -91,7 +91,7 @@ TRON_TIMEOUT_MS=30000
 1) Publish config:
 
 ```bash
-php artisan vendor:publish --tag=tron-config
+php artisan vendor:publish --tag=tron-connection-config
 ```
 
 2) Create a fresh connection and use it explicitly:
