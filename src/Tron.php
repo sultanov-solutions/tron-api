@@ -1421,10 +1421,18 @@ class Tron implements TronInterface
         }
 
         $endpoints = $options['endpoints'] ?? [];
-        $full = $endpoints['full_node'] ?? $presets['full_node'];
-        $sol  = $endpoints['solidity_node'] ?? $presets['solidity_node'];
-        $event= $endpoints['event_server'] ?? $presets['event_server'];
-        $statusPage = $endpoints['status_page'] ?? '/';
+        // Normalize endpoints: treat empty/invalid URLs as unset and fallback to presets
+        $normalize = function($value, $fallback) {
+            $val = is_string($value) ? trim($value) : '';
+            if ($val === '' || !\IEXBase\TronAPI\Support\Utils::isValidUrl($val)) {
+                return $fallback;
+            }
+            return $val;
+        };
+        $full = $normalize($endpoints['full_node'] ?? null, $presets['full_node']);
+        $sol  = $normalize($endpoints['solidity_node'] ?? null, $presets['solidity_node']);
+        $event= $normalize($endpoints['event_server'] ?? null, $presets['event_server']);
+        $statusPage = is_string($endpoints['status_page'] ?? null) ? ($endpoints['status_page'] ?: '/') : '/';
 
         $factory = $options['http_provider_factory'] ?? function($host, $timeoutMs, $headersArg, $status) use ($basicUser, $basicPass) {
             return new Provider\HttpProvider($host, $timeoutMs, $basicUser, $basicPass, $headersArg, $status);
