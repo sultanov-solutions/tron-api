@@ -7,6 +7,11 @@ A PHP API for interacting with the Tron Protocol
 [![Laravel](https://img.shields.io/badge/Laravel-12%20compatible-FF2D20?logo=laravel&style=flat-square)](#)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
+[![Latest Stable Version](https://poser.pugx.org/sultanov-solutions/tron-api/version)](https://packagist.org/packages/sultanov-solutions/tron-api)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/sultanov-solutions/tron-api/tests.yml?style=flat-square&label=build)](https://github.com/sultanov-solutions/tron-api/actions/workflows/tests.yml)
+[![Contributors](https://img.shields.io/github/contributors/sultanov-solutions/tron-api.svg?style=flat-square)](https://github.com/sultanov-solutions/tron-api/graphs/contributors)
+[![Total Downloads](https://img.shields.io/packagist/dt/sultanov-solutions/tron-api.svg?style=flat-square)](https://packagist.org/packages/sultanov-solutions/tron-api)
+
 ## Install
 
 ```bash
