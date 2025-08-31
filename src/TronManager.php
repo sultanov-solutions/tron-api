@@ -17,7 +17,7 @@ class TronManager
         'solidityNode'  =>  'https://api.trongrid.io',
         'eventServer'   =>  'https://api.trongrid.io',
         'explorer'      =>  'https://apilist.tronscan.org',
-        'signServer'    =>  ''
+        'signServer'    =>  null
     ];
 
     /**
@@ -66,6 +66,14 @@ class TronManager
             if ($value === null) {
                 $this->providers[$key] = new HttpProvider($this->defaultNodes[$key]);
             } elseif (is_string($value)) {
+                // If string is not a valid http(s) URL, fall back to defaults (or skip signServer)
+                if (!\IEXBase\TronAPI\Support\Utils::isValidUrl($value)) {
+                    if ($key === 'signServer') {
+                        unset($this->providers[$key]);
+                        continue;
+                    }
+                    $value = $this->defaultNodes[$key];
+                }
                 $this->providers[$key] = new HttpProvider($value);
             } else {
                 // keep passed instance (implements HttpProviderInterface)
