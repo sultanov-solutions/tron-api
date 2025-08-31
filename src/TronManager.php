@@ -17,7 +17,7 @@ class TronManager
         'solidityNode'  =>  'https://api.trongrid.io',
         'eventServer'   =>  'https://api.trongrid.io',
         'explorer'      =>  'https://apilist.tronscan.org',
-        'signServer'    =>  ''
+        'signServer'    =>  null
     ];
 
     /**
@@ -56,20 +56,35 @@ class TronManager
 
         foreach ($providers as $key => $value)
         {
-            //Do not skip the supplier is empty
-            if ($value == null) {
-                $this->providers[$key] = new HttpProvider(
-                    $this->defaultNodes[$key]
-                );
-            };
-
-            if(is_string($providers[$key]))
-                $this->providers[$key] = new HttpProvider($value);
-
-            if(in_array($key, ['signServer']))
+            // Skip optional signServer unless explicitly provided
+            if ($key === 'signServer' && ($value === null || $value === '')) {
+                unset($this->providers[$key]);
                 continue;
+            }
 
-            $this->providers[$key]->setStatusPage($this->statusPage[$key]);
+            // Initialize from defaults when empty (for required nodes)
+            if ($value === null) {
+                $this->providers[$key] = new HttpProvider($this->defaultNodes[$key]);
+            } elseif (is_string($value)) {
+                // If string is not a valid http(s) URL, fall back to defaults (or skip signServer)
+                if (!\IEXBase\TronAPI\Support\Utils::isValidUrl($value)) {
+                    if ($key === 'signServer') {
+                        unset($this->providers[$key]);
+                        continue;
+                    }
+                    $value = $this->defaultNodes[$key];
+                }
+                $this->providers[$key] = new HttpProvider($value);
+            } else {
+                // keep passed instance (implements HttpProviderInterface)
+                $this->providers[$key] = $value;
+            }
+
+            if ($key === 'signServer') {
+                continue;
+            }
+
+            $this->providers[$key]->setStatusPage($this->statusPage[$key] ?? '/');
         }
     }
 
