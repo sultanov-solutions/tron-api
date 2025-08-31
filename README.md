@@ -12,10 +12,18 @@ A PHP API for interacting with the Tron Protocol
 [![Contributors](https://img.shields.io/github/contributors/sultanov-solutions/tron-api.svg?style=flat-square)](https://github.com/sultanov-solutions/tron-api/graphs/contributors)
 [![Total Downloads](https://img.shields.io/packagist/dt/sultanov-solutions/tron-api.svg?style=flat-square)](https://packagist.org/packages/sultanov-solutions/tron-api)
 
+## Fork & Credits
+
+This project is a maintained fork of https://github.com/iexbase/tron-api. Full credit to the original authors and contributors of the upstream project. This fork focuses on PHP 8+ and Laravel 12 compatibility, dependency hygiene, CI/release tooling, and small fixes.
+
 ## Install
 
 ```bash
+# latest stable
 composer require sultanov-solutions/tron-api
+
+# or pin to the current major/minor
+composer require sultanov-solutions/tron-api:^5.0.2
 ```
 
 ## Requirements
@@ -72,4 +80,11 @@ vendor/bin/phpunit
 ```
 
 ## Donations
-**Tron(TRX)**: TRWBqiqoFZysoAeyR1J35ibuyc8EvhUAoY
+If this library is useful for you, you may support the original project or this fork’s maintenance (TRON/TRX addresses):
+
+- Original author (IEXBase): TRWBqiqoFZysoAeyR1J35ibuyc8EvhUAoY
+- Maintainer (Sultanov Solutions): TPgGPSJ37t4nFGyYa7TQxwLZFJMvK587QT
+
+## Changelog
+
+See `CHANGELOG.md` for release notes.
